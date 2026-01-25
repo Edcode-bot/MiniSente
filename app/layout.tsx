@@ -2,7 +2,6 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
 import { Providers } from "@/components/providers/Providers";
-import { Navbar } from "@/components/layout/Navbar";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -10,8 +9,69 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: "MiniSente - Digital Money on Base",
-  description: "Your gateway to digital money on Base chain",
+  title: {
+    default: "MiniSente - Digital Money on Base",
+    template: "%s | MiniSente"
+  },
+  description: "Send money, pay bills, and manage digital finances with USDC on Base blockchain. Fast, secure, and built for Africa.",
+  keywords: [
+    "digital money",
+    "USDC",
+    "Base blockchain",
+    "cryptocurrency",
+    "Uganda",
+    "Africa",
+    "mobile money",
+    "airtime",
+    "utilities",
+    "payments",
+    "DeFi",
+    "stablecoin",
+    "fintech"
+  ],
+  authors: [{ name: "MiniSente Team" }],
+  creator: "MiniSente",
+  publisher: "MiniSente",
+  metadataBase: new URL("https://minisente.com"),
+  alternates: {
+    canonical: "https://minisente.com",
+  },
+  openGraph: {
+    type: "website",
+    locale: "en_US",
+    url: "https://minisente.com",
+    title: "MiniSente - Digital Money on Base",
+    description: "Send money, pay bills, and manage digital finances with USDC on Base blockchain. Fast, secure, and built for Africa.",
+    siteName: "MiniSente",
+    images: [
+      {
+        url: "/og-image.png",
+        width: 1200,
+        height: 630,
+        alt: "MiniSente - Digital Money on Base",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "MiniSente - Digital Money on Base",
+    description: "Send money, pay bills, and manage digital finances with USDC on Base blockchain. Fast, secure, and built for Africa.",
+    images: ["/og-image.png"],
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      "max-video-preview": -1,
+      "max-image-preview": "large",
+      "max-snippet": -1,
+    },
+  },
+  verification: {
+    google: "your-google-verification-code",
+  },
 };
 
 export default function RootLayout({
@@ -21,12 +81,17 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
+      <head>
+        <link rel="icon" href="/favicon.ico" />
+        <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+        <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
+        <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
+        <meta name="theme-color" content="#0F172A" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+      </head>
       <body className={`${inter.variable} font-sans antialiased`}>
         <Providers>
-          <Navbar />
-          <main className="pt-20">
-            {children}
-          </main>
+          {children}
         </Providers>
       </body>
     </html>
