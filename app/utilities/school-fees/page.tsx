@@ -2,15 +2,16 @@
 
 import { useState, useEffect } from 'react'
 import { useAccount } from 'wagmi'
-import { WalletConnect } from '@/components/wallet/WalletConnect'
+import { ConnectButton } from '@/components/wallet/ConnectButton'
 import { PaymentConfirmation } from '@/components/utilities/PaymentConfirmation'
 import Link from 'next/link'
 import { ArrowLeft, GraduationCap } from 'lucide-react'
 import { SCHOOLS } from '@/lib/config/constants'
-import { convertUgxToUsdc, generateReference, mockPayment } from '@/lib/utils/payments'
+import { convertUgxToUsdc, generateReference } from '@/lib/utils/payments'
 import { formatUGX } from '@/lib/utils/format'
 import { toast } from 'sonner'
 import { Button } from '@/components/ui/Button'
+import { useUtilityPayment } from '@/hooks/useUtilityPayment'
 
 export default function SchoolFeesPage() {
   const { isConnected } = useAccount()
@@ -23,7 +24,7 @@ export default function SchoolFeesPage() {
   const [referenceNumber, setReferenceNumber] = useState('')
   const [errors, setErrors] = useState<{ school?: string; studentName?: string; studentId?: string; semester?: string; amount?: string }>({})
   const [showConfirmation, setShowConfirmation] = useState(false)
-  const [isProcessing, setIsProcessing] = useState(false)
+  const { makePayment, isPending, isConfirming, success } = useUtilityPayment()
 
   useEffect(() => {
     setReferenceNumber(generateReference('SCH'))
@@ -68,30 +69,27 @@ export default function SchoolFeesPage() {
   }
 
   const handleConfirm = async () => {
-    setIsProcessing(true)
     try {
-      const amountUsdc = convertUgxToUsdc(amount)
-      const result = await mockPayment('school-fees', {
-        school: selectedSchool || customSchool,
-        studentName,
-        studentId,
-        semester,
-        referenceNumber,
-        amount,
-      }, amountUsdc)
-
-      if (result.success) {
-        toast.success(`School fees paid successfully! Receipt: ${result.receiptNumber}`)
+      await makePayment({
+        type: 'school_fees',
+        details: {
+          school: selectedSchool || customSchool,
+          studentName,
+          studentId,
+          semester,
+          amount,
+        },
+      })
+      
+      if (success) {
+        toast.success('School fees paid successfully!')
         setTimeout(() => {
-          window.location.href = '/'
+          window.location.href = '/utilities'
         }, 2000)
-      } else {
-        toast.error(result.error || 'Payment failed')
       }
     } catch (error) {
-      toast.error('Payment failed. Please try again.')
+      console.error('Payment error:', error)
     } finally {
-      setIsProcessing(false)
       setShowConfirmation(false)
     }
   }
@@ -114,7 +112,7 @@ export default function SchoolFeesPage() {
                 <p className="text-gray-600">Secure education payments</p>
               </div>
             </div>
-            <WalletConnect />
+            <ConnectButton />
           </header>
 
           <main className="flex flex-col items-center justify-center min-h-[60vh]">
@@ -124,7 +122,7 @@ export default function SchoolFeesPage() {
               </div>
               <h2 className="text-2xl font-semibold text-gray-900 mb-4">Connect Your Wallet</h2>
               <p className="text-gray-600 mb-8">Connect your wallet to pay school fees</p>
-              <WalletConnect />
+              <ConnectButton />
             </div>
           </main>
         </div>
@@ -145,7 +143,7 @@ export default function SchoolFeesPage() {
               <p className="text-gray-600">Secure education payments</p>
             </div>
           </div>
-          <WalletConnect />
+          <ConnectButton />
         </header>
 
         <main className="max-w-2xl mx-auto">
@@ -285,10 +283,11 @@ export default function SchoolFeesPage() {
 
               <Button
                 type="submit"
+                loading={isPending || isConfirming}
                 className="w-full bg-gradient-to-r from-purple-500 to-purple-600 hover:from-purple-600 hover:to-purple-700"
                 disabled={(!selectedSchool && !customSchool) || !studentName || !studentId || !semester || !amount}
               >
-                Pay Fees
+                {isPending || isConfirming ? 'Processing...' : 'Pay Fees'}
               </Button>
             </form>
           </div>
@@ -309,7 +308,7 @@ export default function SchoolFeesPage() {
             amountUgx={parseFloat(amount)}
             onConfirm={handleConfirm}
             onCancel={handleCancel}
-            loading={isProcessing}
+            loading={isPending || isConfirming}
           />
         )}
       </div>

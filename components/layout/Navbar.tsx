@@ -4,7 +4,7 @@ import { useState } from 'react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { useAccount } from 'wagmi'
-import { WalletConnect } from '@/components/wallet/WalletConnect'
+import { ConnectButton } from '@/components/wallet/ConnectButton'
 import { formatAddress } from '@/lib/utils/format'
 import { Menu, X, Coins } from 'lucide-react'
 
@@ -61,13 +61,7 @@ export function Navbar() {
             </div>
 
             {/* Wallet Status */}
-            {isConnected && address ? (
-              <div className="text-sm font-mono text-gray-600 bg-gray-100 px-3 py-1 rounded-lg">
-                {formatAddress(address)}
-              </div>
-            ) : (
-              <WalletConnect />
-            )}
+            <ConnectButton />
           </div>
 
           {/* Mobile Menu Button */}
@@ -112,13 +106,7 @@ export function Navbar() {
                 </div>
 
                 {/* Wallet Status */}
-                {isConnected && address ? (
-                  <div className="text-sm font-mono text-gray-600 bg-gray-100 px-3 py-2 rounded-lg">
-                    {formatAddress(address)}
-                  </div>
-                ) : (
-                  <WalletConnect />
-                )}
+                <ConnectButton />
               </div>
             </div>
           </div>

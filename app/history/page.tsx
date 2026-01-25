@@ -6,6 +6,8 @@ import { ArrowUpRight, ArrowDownLeft, ExternalLink, Search, Download, Filter } f
 import { formatAddress, formatUSDC, formatTimestamp } from '@/lib/utils/format'
 import { BLOCK_EXPLORER_URL } from '@/lib/config/constants'
 import { Button } from '@/components/ui/Button'
+import { useRealTransactions } from '@/lib/hooks/useRealTransactions'
+import { toast } from 'sonner'
 
 interface Transaction {
   id: string
@@ -69,7 +71,7 @@ const mockTransactions: Transaction[] = [
     hash: '0x5678901234ef1234567890ef1234567890123456',
     type: 'electricity',
     from: '0x1234567890abcdef1234567890abcdef12345678',
-    to: '0x0000000000000000000000000000000000000000',
+    to: '0x0000000000000000000000000000000000000000000',
     amount: '25.00',
     timestamp: Date.now() - 259200000,
     status: 'confirmed',
@@ -95,8 +97,49 @@ export default function HistoryPage() {
   const [currentPage, setCurrentPage] = useState(1)
   const itemsPerPage = 10
 
+  // Use real transactions if available, fallback to mock
+  const realTx = useRealTransactions()
+  const transactions = realTx.transactions.length > 0 ? realTx.transactions.map((tx: any) => {
+    const isTreasury = tx.to.toLowerCase() === '0x742d35Cc6634C0532925a3b844Bc9e7595f0bEb'.toLowerCase()
+    const isFromUser = tx.from.toLowerCase() === address?.toLowerCase()
+    
+    let type: Transaction['type']
+    if (isTreasury && isFromUser) {
+      type = 'airtime'
+    } else if (isTreasury && !isFromUser) {
+      type = 'data'
+    } else if (isFromUser) {
+      type = 'sent'
+    } else {
+      type = 'received'
+    }
+    
+    let description: string
+    if (isTreasury && isFromUser) {
+      description = 'Airtime Purchase'
+    } else if (isTreasury && !isFromUser) {
+      description = 'Data Bundle Purchase'
+    } else if (isFromUser) {
+      description = 'USDC Transfer'
+    } else {
+      description = 'USDC Received'
+    }
+    
+    return {
+      id: tx.hash,
+      hash: tx.hash,
+      type,
+      from: tx.from,
+      to: tx.to,
+      amount: (parseFloat(tx.value) / 1e6).toFixed(2),
+      timestamp: tx.timestamp,
+      status: tx.status,
+      description,
+    }
+  }) : mockTransactions
+
   const filteredTransactions = useMemo(() => {
-    let filtered = mockTransactions
+    let filtered = transactions
 
     // Filter by type
     if (filter === 'sent') {
@@ -117,7 +160,7 @@ export default function HistoryPage() {
     }
 
     return filtered
-  }, [filter, searchTerm])
+  }, [transactions, filter, searchTerm])
 
   const paginatedTransactions = useMemo(() => {
     const startIndex = (currentPage - 1) * itemsPerPage

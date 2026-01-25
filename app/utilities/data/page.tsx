@@ -2,15 +2,16 @@
 
 import { useState } from 'react'
 import { useAccount } from 'wagmi'
-import { WalletConnect } from '@/components/wallet/WalletConnect'
+import { ConnectButton } from '@/components/wallet/ConnectButton'
 import { PaymentConfirmation } from '@/components/utilities/PaymentConfirmation'
 import Link from 'next/link'
 import { ArrowLeft, Wifi } from 'lucide-react'
 import { CARRIERS, DATA_BUNDLES } from '@/lib/config/constants'
-import { convertUgxToUsdc, validatePhoneNumber, formatPhoneNumber, mockPayment } from '@/lib/utils/payments'
+import { convertUgxToUsdc, validatePhoneNumber, formatPhoneNumber } from '@/lib/utils/payments'
 import { formatUGX } from '@/lib/utils/format'
 import { toast } from 'sonner'
 import { Button } from '@/components/ui/Button'
+import { useUtilityPayment } from '@/hooks/useUtilityPayment'
 
 export default function DataPage() {
   const { isConnected } = useAccount()
@@ -19,7 +20,7 @@ export default function DataPage() {
   const [selectedBundle, setSelectedBundle] = useState<(typeof DATA_BUNDLES)[number] | null>(null)
   const [errors, setErrors] = useState<{ carrier?: string; phone?: string; bundle?: string }>({})
   const [showConfirmation, setShowConfirmation] = useState(false)
-  const [isProcessing, setIsProcessing] = useState(false)
+  const { makePayment, isPending, isConfirming, success } = useUtilityPayment()
 
   const validateForm = () => {
     const newErrors: { carrier?: string; phone?: string; bundle?: string } = {}
@@ -50,27 +51,26 @@ export default function DataPage() {
   }
 
   const handleConfirm = async () => {
-    setIsProcessing(true)
     try {
-      const amountUsdc = convertUgxToUsdc(selectedBundle!.price)
-      const result = await mockPayment('data', {
-        carrier: selectedCarrier,
-        phone: formatPhoneNumber(phoneNumber),
-        bundle: selectedBundle,
-      }, amountUsdc)
-
-      if (result.success) {
-        toast.success(`Data bundle purchased successfully! Reference: ${result.reference}`)
+      await makePayment({
+        type: 'data',
+        details: {
+          carrier: selectedCarrier!,
+          phoneNumber: formatPhoneNumber(phoneNumber),
+          bundle: selectedBundle!.name,
+          amount: selectedBundle!.price.toString(),
+        },
+      })
+      
+      if (success) {
+        toast.success('Data bundle purchased successfully!')
         setTimeout(() => {
-          window.location.href = '/'
+          window.location.href = '/utilities'
         }, 2000)
-      } else {
-        toast.error(result.error || 'Payment failed')
       }
     } catch (error) {
-      toast.error('Payment failed. Please try again.')
+      console.error('Payment error:', error)
     } finally {
-      setIsProcessing(false)
       setShowConfirmation(false)
     }
   }
@@ -93,7 +93,7 @@ export default function DataPage() {
                 <p className="text-gray-600">Stay connected with mobile data</p>
               </div>
             </div>
-            <WalletConnect />
+            <ConnectButton />
           </header>
 
           <main className="flex flex-col items-center justify-center min-h-[60vh]">
@@ -103,7 +103,7 @@ export default function DataPage() {
               </div>
               <h2 className="text-2xl font-semibold text-gray-900 mb-4">Connect Your Wallet</h2>
               <p className="text-gray-600 mb-8">Connect your wallet to buy data bundles</p>
-              <WalletConnect />
+              <ConnectButton />
             </div>
           </main>
         </div>
@@ -124,7 +124,7 @@ export default function DataPage() {
               <p className="text-gray-600">Stay connected with mobile data</p>
             </div>
           </div>
-          <WalletConnect />
+          <ConnectButton />
         </header>
 
         <main className="max-w-4xl mx-auto">
@@ -234,10 +234,11 @@ export default function DataPage() {
 
               <Button
                 type="submit"
+                loading={isPending || isConfirming}
                 className="w-full"
                 disabled={!selectedCarrier || !phoneNumber || !selectedBundle}
               >
-                Purchase Bundle
+                {isPending || isConfirming ? 'Processing...' : 'Purchase Bundle'}
               </Button>
             </form>
           </div>
@@ -256,7 +257,7 @@ export default function DataPage() {
             amountUgx={selectedBundle!.price}
             onConfirm={handleConfirm}
             onCancel={handleCancel}
-            loading={isProcessing}
+            loading={isPending || isConfirming}
           />
         )}
       </div>

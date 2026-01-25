@@ -1,7 +1,7 @@
 'use client'
 
 import { useAccount } from 'wagmi'
-import { WalletConnect } from '@/components/wallet/WalletConnect'
+import { ConnectButton } from '@/components/wallet/ConnectButton'
 import { useUSDCBalance } from '@/hooks/useUSDCBalance'
 import Link from 'next/link'
 import { Smartphone, Database, Zap, GraduationCap } from 'lucide-react'
@@ -21,7 +21,7 @@ export default function Dashboard() {
       emoji: '📱',
       title: 'Airtime',
       description: 'Buy airtime for MTN & Airtel',
-      href: '/airtime',
+      href: '/utilities/airtime',
       color: 'from-green-500 to-green-600',
     },
     {
@@ -29,7 +29,7 @@ export default function Dashboard() {
       emoji: '📊',
       title: 'Data',
       description: 'Purchase data bundles',
-      href: '/data',
+      href: '/utilities/data',
       color: 'from-blue-500 to-blue-600',
     },
     {
@@ -37,7 +37,7 @@ export default function Dashboard() {
       emoji: '⚡',
       title: 'Electricity',
       description: 'Pay UMEME prepaid',
-      href: '/electricity',
+      href: '/utilities/electricity',
       color: 'from-yellow-500 to-yellow-600',
     },
     {
@@ -45,7 +45,7 @@ export default function Dashboard() {
       emoji: '🎓',
       title: 'School Fees',
       description: 'Pay school fees',
-      href: '/school-fees',
+      href: '/utilities/school-fees',
       color: 'from-purple-500 to-purple-600',
     },
   ]
@@ -59,7 +59,7 @@ export default function Dashboard() {
               <h1 className="text-4xl font-bold text-gray-900 mb-2">MiniSente</h1>
               <p className="text-gray-600">Digital Money on Base</p>
             </div>
-            <WalletConnect />
+            <ConnectButton />
           </header>
 
           <main className="flex flex-col items-center justify-center min-h-[60vh]">
@@ -73,7 +73,7 @@ export default function Dashboard() {
               <p className="text-gray-600 mb-8">
                 Connect your wallet to access digital money services on Base chain
               </p>
-              <WalletConnect />
+              <ConnectButton />
             </div>
           </main>
         </div>
@@ -89,7 +89,7 @@ export default function Dashboard() {
             <h1 className="text-4xl font-bold text-gray-900 mb-2">MiniSente</h1>
             <p className="text-gray-600">Digital Money on Base</p>
           </div>
-          <WalletConnect />
+          <ConnectButton />
         </header>
 
         <main>
