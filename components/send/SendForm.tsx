@@ -2,12 +2,16 @@
 
 import { useState } from 'react'
 import { useAccount, useWriteContract, useWaitForTransactionReceipt } from 'wagmi'
+import { base } from 'wagmi/chains'
 import { useUSDCBalance } from '@/hooks/useUSDCBalance'
-import { USDC_ADDRESS, USDC_ABI, BLOCK_EXPLORER_URL } from '@/lib/config/constants'
+import { ERC20_ABI } from '@/lib/abis/erc20'
 import { formatAddress, formatUSDC, formatUGX, usdcToUgx, isValidAddress } from '@/lib/utils/format'
+import { BLOCK_EXPLORER_URL } from '@/lib/config/constants'
 import { Button } from '@/components/ui/Button'
 import { toast } from 'sonner'
 import { Loader2, ExternalLink, CheckCircle } from 'lucide-react'
+
+const USDC_ADDRESS = '0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913' as const
 
 export function SendForm() {
   const { address } = useAccount()
@@ -15,6 +19,7 @@ export function SendForm() {
   const { writeContract, isPending: writePending, data: hash } = useWriteContract()
   const { isLoading: confirmLoading, isSuccess: confirmed } = useWaitForTransactionReceipt({
     hash,
+    chainId: base.id,
   })
 
   const [recipient, setRecipient] = useState('')
@@ -57,16 +62,23 @@ export function SendForm() {
   }
 
   const handleConfirm = () => {
-    const amountInWei = BigInt(Math.floor(parseFloat(amount) * 1e6))
-    
-    writeContract({
-      address: USDC_ADDRESS,
-      abi: USDC_ABI,
-      functionName: 'transfer',
-      args: [recipient as `0x${string}`, amountInWei],
-    })
+    try {
+      const amountInWei = BigInt(Math.floor(parseFloat(amount) * 1e6))
+      
+      writeContract({
+        address: USDC_ADDRESS,
+        abi: ERC20_ABI,
+        functionName: 'transfer',
+        args: [recipient as `0x${string}`, amountInWei],
+        chainId: base.id,
+      })
 
-    setShowConfirmation(false)
+      setShowConfirmation(false)
+      toast.success('Transaction submitted!')
+    } catch (error) {
+      toast.error('Failed to send transaction')
+      console.error('Send error:', error)
+    }
   }
 
   const handleCancel = () => {

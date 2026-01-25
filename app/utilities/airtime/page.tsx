@@ -2,15 +2,16 @@
 
 import { useState } from 'react'
 import { useAccount } from 'wagmi'
-import { WalletConnect } from '@/components/wallet/WalletConnect'
+import { ConnectButton } from '@/components/wallet/ConnectButton'
 import { PaymentConfirmation } from '@/components/utilities/PaymentConfirmation'
 import Link from 'next/link'
 import { ArrowLeft, Phone } from 'lucide-react'
 import { CARRIERS, AIRTIME_AMOUNTS } from '@/lib/config/constants'
-import { convertUgxToUsdc, validatePhoneNumber, formatPhoneNumber, mockPayment } from '@/lib/utils/payments'
+import { convertUgxToUsdc, validatePhoneNumber, formatPhoneNumber } from '@/lib/utils/payments'
 import { formatUGX } from '@/lib/utils/format'
 import { toast } from 'sonner'
 import { Button } from '@/components/ui/Button'
+import { useUtilityPayment } from '@/hooks/useUtilityPayment'
 
 export default function AirtimePage() {
   const { isConnected } = useAccount()
@@ -19,7 +20,7 @@ export default function AirtimePage() {
   const [amount, setAmount] = useState('')
   const [errors, setErrors] = useState<{ carrier?: string; phone?: string; amount?: string }>({})
   const [showConfirmation, setShowConfirmation] = useState(false)
-  const [isProcessing, setIsProcessing] = useState(false)
+  const { makePayment, isPending, isConfirming, success } = useUtilityPayment()
 
   const validateForm = () => {
     const newErrors: { carrier?: string; phone?: string; amount?: string } = {}
@@ -54,27 +55,25 @@ export default function AirtimePage() {
   }
 
   const handleConfirm = async () => {
-    setIsProcessing(true)
     try {
-      const amountUsdc = convertUgxToUsdc(amount)
-      const result = await mockPayment('airtime', {
-        carrier: selectedCarrier,
-        phone: formatPhoneNumber(phoneNumber),
-        amount,
-      }, amountUsdc)
-
-      if (result.success) {
-        toast.success(`Airtime purchased successfully! Reference: ${result.reference}`)
+      await makePayment({
+        type: 'airtime',
+        details: {
+          carrier: selectedCarrier!,
+          phoneNumber: formatPhoneNumber(phoneNumber),
+          amount,
+        },
+      })
+      
+      if (success) {
+        toast.success('Airtime purchased successfully!')
         setTimeout(() => {
-          window.location.href = '/'
+          window.location.href = '/utilities'
         }, 2000)
-      } else {
-        toast.error(result.error || 'Payment failed')
       }
     } catch (error) {
-      toast.error('Payment failed. Please try again.')
+      console.error('Payment error:', error)
     } finally {
-      setIsProcessing(false)
       setShowConfirmation(false)
     }
   }
@@ -97,7 +96,7 @@ export default function AirtimePage() {
                 <p className="text-gray-600">Top up your mobile phone</p>
               </div>
             </div>
-            <WalletConnect />
+            <ConnectButton />
           </header>
 
           <main className="flex flex-col items-center justify-center min-h-[60vh]">
@@ -107,7 +106,7 @@ export default function AirtimePage() {
               </div>
               <h2 className="text-2xl font-semibold text-gray-900 mb-4">Connect Your Wallet</h2>
               <p className="text-gray-600 mb-8">Connect your wallet to buy airtime</p>
-              <WalletConnect />
+              <ConnectButton />
             </div>
           </main>
         </div>
@@ -128,7 +127,7 @@ export default function AirtimePage() {
               <p className="text-gray-600">Top up your mobile phone</p>
             </div>
           </div>
-          <WalletConnect />
+          <ConnectButton />
         </header>
 
         <main className="max-w-2xl mx-auto">
@@ -222,10 +221,11 @@ export default function AirtimePage() {
 
               <Button
                 type="submit"
+                loading={isPending || isConfirming}
                 className="w-full"
                 disabled={!selectedCarrier || !phoneNumber || !amount}
               >
-                Buy Airtime
+                {isPending || isConfirming ? 'Processing...' : 'Buy Airtime'}
               </Button>
             </form>
           </div>
@@ -243,7 +243,7 @@ export default function AirtimePage() {
             amountUgx={parseFloat(amount)}
             onConfirm={handleConfirm}
             onCancel={handleCancel}
-            loading={isProcessing}
+            loading={isPending || isConfirming}
           />
         )}
       </div>

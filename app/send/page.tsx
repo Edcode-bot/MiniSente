@@ -1,7 +1,7 @@
 'use client'
 
 import { useAccount } from 'wagmi'
-import { WalletConnect } from '@/components/wallet/WalletConnect'
+import { ConnectButton } from '@/components/wallet/ConnectButton'
 import { SendForm } from '@/components/send/SendForm'
 import Link from 'next/link'
 import { ArrowLeft } from 'lucide-react'
@@ -26,7 +26,7 @@ export default function SendPage() {
                 <p className="text-gray-600">Transfer USDC to any address</p>
               </div>
             </div>
-            <WalletConnect />
+            <ConnectButton />
           </header>
 
           <main className="flex flex-col items-center justify-center min-h-[60vh]">
@@ -40,7 +40,7 @@ export default function SendPage() {
               <p className="text-gray-600 mb-8">
                 Connect your wallet to send USDC to any address on Base
               </p>
-              <WalletConnect />
+              <ConnectButton />
             </div>
           </main>
         </div>
@@ -64,7 +64,7 @@ export default function SendPage() {
               <p className="text-gray-600">Transfer USDC to any address</p>
             </div>
           </div>
-          <WalletConnect />
+          <ConnectButton />
         </header>
 
         <main className="max-w-2xl mx-auto">

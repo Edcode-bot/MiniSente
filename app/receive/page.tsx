@@ -1,7 +1,7 @@
 'use client'
 
 import { useAccount } from 'wagmi'
-import { WalletConnect } from '@/components/wallet/WalletConnect'
+import { ConnectButton } from '@/components/wallet/ConnectButton'
 import { QRCode } from '@/components/receive/QRCode'
 import { TransactionList } from '@/components/transactions/TransactionList'
 import Link from 'next/link'
@@ -55,7 +55,7 @@ export default function ReceivePage() {
                 <p className="text-gray-600">Get your wallet address and QR code</p>
               </div>
             </div>
-            <WalletConnect />
+            <ConnectButton />
           </header>
 
           <main className="flex flex-col items-center justify-center min-h-[60vh]">
@@ -69,7 +69,7 @@ export default function ReceivePage() {
               <p className="text-gray-600 mb-8">
                 Connect your wallet to receive USDC payments
               </p>
-              <WalletConnect />
+              <ConnectButton />
             </div>
           </main>
         </div>
@@ -93,7 +93,7 @@ export default function ReceivePage() {
               <p className="text-gray-600">Get your wallet address and QR code</p>
             </div>
           </div>
-          <WalletConnect />
+          <ConnectButton />
         </header>
 
         <main className="max-w-4xl mx-auto">
