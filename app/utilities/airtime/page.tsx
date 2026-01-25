@@ -2,10 +2,10 @@
 
 import { useState } from 'react'
 import { useAccount } from 'wagmi'
-import { ConnectButton } from '@/components/wallet/ConnectButton'
+import { ConnectWallet } from '@/components/wallet/ConnectWallet'
 import { PaymentConfirmation } from '@/components/utilities/PaymentConfirmation'
 import Link from 'next/link'
-import { ArrowLeft, Phone } from 'lucide-react'
+import { ArrowLeft, Phone, Smartphone } from 'lucide-react'
 import { CARRIERS, AIRTIME_AMOUNTS } from '@/lib/config/constants'
 import { convertUgxToUsdc, validatePhoneNumber, formatPhoneNumber } from '@/lib/utils/payments'
 import { formatUGX } from '@/lib/utils/format'
@@ -84,29 +84,29 @@ export default function AirtimePage() {
 
   if (!isConnected) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50">
-        <div className="container mx-auto px-4 py-8">
+      <div className="min-h-screen bg-bg-darker text-white">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
           <header className="flex justify-between items-center mb-12">
             <div className="flex items-center gap-4">
-              <Link href="/utilities" className="p-2 hover:bg-gray-100 rounded-lg transition-colors">
+              <Link href="/utilities" className="p-2 hover:bg-white/10 rounded-lg transition-colors">
                 <ArrowLeft className="w-5 h-5" />
               </Link>
               <div>
-                <h1 className="text-4xl font-bold text-gray-900 mb-2">Buy Airtime</h1>
-                <p className="text-gray-600">Top up your mobile phone</p>
+                <h1 className="text-4xl font-bold gradient-text mb-2">Buy Airtime</h1>
+                <p className="text-gray-400">Top up your mobile phone</p>
               </div>
             </div>
-            <ConnectButton />
+            <ConnectWallet />
           </header>
 
           <main className="flex flex-col items-center justify-center min-h-[60vh]">
             <div className="text-center max-w-md">
-              <div className="w-24 h-24 bg-gradient-to-br from-orange-400 to-yellow-500 rounded-full flex items-center justify-center mx-auto mb-6">
-                <span className="text-4xl">📱</span>
+              <div className="w-24 h-24 bg-gradient-to-br from-accent-orange to-accent-pink rounded-full flex items-center justify-center mx-auto mb-6">
+                <Smartphone className="w-12 h-12 text-white" />
               </div>
-              <h2 className="text-2xl font-semibold text-gray-900 mb-4">Connect Your Wallet</h2>
-              <p className="text-gray-600 mb-8">Connect your wallet to buy airtime</p>
-              <ConnectButton />
+              <h2 className="text-2xl font-semibold text-white mb-4">Connect Your Wallet</h2>
+              <p className="text-gray-400 mb-8">Connect your wallet to buy airtime</p>
+              <ConnectWallet />
             </div>
           </main>
         </div>
@@ -115,26 +115,26 @@ export default function AirtimePage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50">
-      <div className="container mx-auto px-4 py-8">
+    <div className="min-h-screen bg-bg-darker text-white">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <header className="flex justify-between items-center mb-12">
           <div className="flex items-center gap-4">
-            <Link href="/utilities" className="p-2 hover:bg-gray-100 rounded-lg transition-colors">
+            <Link href="/utilities" className="p-2 hover:bg-white/10 rounded-lg transition-colors">
               <ArrowLeft className="w-5 h-5" />
             </Link>
             <div>
-              <h1 className="text-4xl font-bold text-gray-900 mb-2">Buy Airtime</h1>
-              <p className="text-gray-600">Top up your mobile phone</p>
+              <h1 className="text-4xl font-bold gradient-text mb-2">Buy Airtime</h1>
+              <p className="text-gray-400">Top up your mobile phone</p>
             </div>
           </div>
-          <ConnectButton />
+          <ConnectWallet />
         </header>
 
         <main className="max-w-2xl mx-auto">
-          <div className="bg-white rounded-2xl shadow-xl p-8">
+          <div className="glass-morphism rounded-2xl p-8 border border-white/20">
             <form onSubmit={handleSubmit} className="space-y-8">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-4">
+                <label className="block text-sm font-medium text-white mb-4">
                   Select Carrier
                 </label>
                 <div className="grid grid-cols-2 gap-4">
@@ -143,10 +143,10 @@ export default function AirtimePage() {
                       key={key}
                       type="button"
                       onClick={() => setSelectedCarrier(key as 'MTN' | 'AIRTEL')}
-                      className={`p-4 rounded-xl border-2 transition-all ${
+                      className={`p-4 rounded-xl border-2 transition-all card-hover ${
                         selectedCarrier === key
-                          ? `${carrier.bgColor} border-transparent text-white`
-                          : 'border-gray-200 hover:border-gray-300'
+                          ? `${carrier.bgColor} border-transparent text-white glow-effect`
+                          : 'border-white/20 hover:border-white/40'
                       }`}
                     >
                       <div className="text-2xl mb-2">{carrier.logo}</div>
@@ -155,12 +155,12 @@ export default function AirtimePage() {
                   ))}
                 </div>
                 {errors.carrier && (
-                  <p className="mt-2 text-sm text-red-600">{errors.carrier}</p>
+                  <p className="mt-2 text-sm text-red-400">{errors.carrier}</p>
                 )}
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium text-white mb-2">
                   Phone Number
                 </label>
                 <div className="relative">
@@ -170,18 +170,18 @@ export default function AirtimePage() {
                     value={phoneNumber}
                     onChange={(e) => setPhoneNumber(e.target.value)}
                     placeholder="07xxxxxxxx"
-                    className={`w-full pl-10 pr-4 py-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent ${
-                      errors.phone ? 'border-red-500' : 'border-gray-300'
+                    className={`w-full pl-10 pr-4 py-3 bg-white/10 border rounded-lg focus:ring-2 focus:ring-accent-orange focus:border-transparent transition-all ${
+                      errors.phone ? 'border-red-500' : 'border-white/20'
                     }`}
                   />
                 </div>
                 {errors.phone && (
-                  <p className="mt-1 text-sm text-red-600">{errors.phone}</p>
+                  <p className="mt-1 text-sm text-red-400">{errors.phone}</p>
                 )}
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium text-white mb-2">
                   Amount (UGX)
                 </label>
                 <div className="grid grid-cols-3 gap-3 mb-4">
@@ -190,10 +190,10 @@ export default function AirtimePage() {
                       key={amt}
                       type="button"
                       onClick={() => setAmount(amt.toString())}
-                      className={`py-2 px-4 rounded-lg border transition-colors ${
+                      className={`py-2 px-4 rounded-lg border transition-all card-hover ${
                         amount === amt.toString()
-                          ? 'bg-blue-500 text-white border-blue-500'
-                          : 'border-gray-200 hover:border-gray-300'
+                          ? 'bg-gradient-to-r from-accent-orange to-accent-pink text-white border-transparent'
+                          : 'border-white/20 hover:border-white/40'
                       }`}
                     >
                       {formatUGX(amt)}
@@ -205,15 +205,15 @@ export default function AirtimePage() {
                   value={amount}
                   onChange={(e) => setAmount(e.target.value)}
                   placeholder="Enter custom amount"
-                  className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent ${
-                    errors.amount ? 'border-red-500' : 'border-gray-300'
+                  className={`w-full px-4 py-3 bg-white/10 border rounded-lg focus:ring-2 focus:ring-accent-orange focus:border-transparent transition-all ${
+                    errors.amount ? 'border-red-500' : 'border-white/20'
                   }`}
                 />
                 {errors.amount && (
-                  <p className="mt-1 text-sm text-red-600">{errors.amount}</p>
+                  <p className="mt-1 text-sm text-red-400">{errors.amount}</p>
                 )}
                 {amount && parseFloat(amount) > 0 && (
-                  <p className="mt-2 text-sm text-gray-600">
+                  <p className="mt-2 text-sm text-gray-400 neon-green">
                     Cost: ~{(convertUgxToUsdc(amount)).toFixed(4)} USDC
                   </p>
                 )}
@@ -222,7 +222,7 @@ export default function AirtimePage() {
               <Button
                 type="submit"
                 loading={isPending || isConfirming}
-                className="w-full"
+                className="w-full bg-gradient-to-r from-accent-orange to-accent-pink hover:scale-105 transition-all duration-200"
                 disabled={!selectedCarrier || !phoneNumber || !amount}
               >
                 {isPending || isConfirming ? 'Processing...' : 'Buy Airtime'}

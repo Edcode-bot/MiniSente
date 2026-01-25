@@ -1,11 +1,11 @@
 'use client'
 
 import { useAccount } from 'wagmi'
-import { ConnectButton } from '@/components/wallet/ConnectButton'
+import { ConnectWallet } from '@/components/wallet/ConnectWallet'
 import { QRCode } from '@/components/receive/QRCode'
 import { TransactionList } from '@/components/transactions/TransactionList'
 import Link from 'next/link'
-import { ArrowLeft, Copy, Share2 } from 'lucide-react'
+import { ArrowLeft, Copy, Share2, ArrowDownLeft } from 'lucide-react'
 import { formatAddress } from '@/lib/utils/format'
 import { toast } from 'sonner'
 
@@ -40,36 +40,36 @@ export default function ReceivePage() {
 
   if (!isConnected) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50">
-        <div className="container mx-auto px-4 py-8">
+      <div className="min-h-screen bg-bg-darker text-white">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
           <header className="flex justify-between items-center mb-12">
             <div className="flex items-center gap-4">
               <Link 
-                href="/"
-                className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+                href="/dashboard"
+                className="p-2 hover:bg-white/10 rounded-lg transition-colors"
               >
                 <ArrowLeft className="w-5 h-5" />
               </Link>
               <div>
-                <h1 className="text-4xl font-bold text-gray-900 mb-2">Receive USDC</h1>
-                <p className="text-gray-600">Get your wallet address and QR code</p>
+                <h1 className="text-4xl font-bold gradient-text mb-2">Receive USDC</h1>
+                <p className="text-gray-400">Get your wallet address and QR code</p>
               </div>
             </div>
-            <ConnectButton />
+            <ConnectWallet />
           </header>
 
           <main className="flex flex-col items-center justify-center min-h-[60vh]">
             <div className="text-center max-w-md">
-              <div className="w-24 h-24 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center mx-auto mb-6">
-                <span className="text-4xl">📥</span>
+              <div className="w-24 h-24 bg-gradient-to-br from-primary-violet via-primary-blue to-primary-teal rounded-full flex items-center justify-center mx-auto mb-6">
+                <ArrowDownLeft className="w-12 h-12 text-white" />
               </div>
-              <h2 className="text-2xl font-semibold text-gray-900 mb-4">
+              <h2 className="text-2xl font-semibold text-white mb-4">
                 Connect Your Wallet
               </h2>
-              <p className="text-gray-600 mb-8">
+              <p className="text-gray-400 mb-8">
                 Connect your wallet to receive USDC payments
               </p>
-              <ConnectButton />
+              <ConnectWallet />
             </div>
           </main>
         </div>
@@ -78,45 +78,45 @@ export default function ReceivePage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50">
-      <div className="container mx-auto px-4 py-8">
+    <div className="min-h-screen bg-bg-darker text-white">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <header className="flex justify-between items-center mb-12">
           <div className="flex items-center gap-4">
             <Link 
-              href="/"
-              className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+              href="/dashboard"
+              className="p-2 hover:bg-white/10 rounded-lg transition-colors"
             >
               <ArrowLeft className="w-5 h-5" />
             </Link>
             <div>
-              <h1 className="text-4xl font-bold text-gray-900 mb-2">Receive USDC</h1>
-              <p className="text-gray-600">Get your wallet address and QR code</p>
+              <h1 className="text-4xl font-bold gradient-text mb-2">Receive USDC</h1>
+              <p className="text-gray-400">Get your wallet address and QR code</p>
             </div>
           </div>
-          <ConnectButton />
+          <ConnectWallet />
         </header>
 
         <main className="max-w-4xl mx-auto">
           <div className="grid lg:grid-cols-2 gap-8 mb-12">
-            <div className="bg-white rounded-2xl shadow-xl p-8">
-              <h2 className="text-xl font-bold text-gray-900 mb-6">Your Wallet Address</h2>
+            <div className="glass-morphism rounded-2xl p-8 border border-white/20">
+              <h2 className="text-xl font-bold text-white mb-6">Your Wallet Address</h2>
               
-              <div className="bg-gray-50 rounded-lg p-4 mb-6">
-                <p className="text-sm text-gray-600 mb-2">Full Address:</p>
-                <p className="font-mono text-sm break-all">{address}</p>
+              <div className="bg-white/5 rounded-lg p-4 mb-6 border border-white/10">
+                <p className="text-sm text-gray-400 mb-2">Full Address:</p>
+                <p className="font-mono text-sm break-all text-white">{address}</p>
               </div>
 
               <div className="flex gap-4 mb-8">
                 <button
                   onClick={handleCopyAddress}
-                  className="flex-1 flex items-center justify-center gap-2 px-4 py-3 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors"
+                  className="flex-1 flex items-center justify-center gap-2 px-4 py-3 bg-gradient-to-r from-primary-blue to-primary-teal text-white rounded-lg hover:scale-105 transition-all duration-200"
                 >
                   <Copy className="w-4 h-4" />
                   Copy Address
                 </button>
                 <button
                   onClick={handleShareAddress}
-                  className="flex-1 flex items-center justify-center gap-2 px-4 py-3 bg-purple-500 text-white rounded-lg hover:bg-purple-600 transition-colors"
+                  className="flex-1 flex items-center justify-center gap-2 px-4 py-3 bg-gradient-to-r from-primary-violet to-primary-blue text-white rounded-lg hover:scale-105 transition-all duration-200"
                 >
                   <Share2 className="w-4 h-4" />
                   Share Address
@@ -124,13 +124,15 @@ export default function ReceivePage() {
               </div>
 
               <div className="text-center">
-                <p className="text-sm text-gray-600 mb-4">Scan QR Code</p>
-                <QRCode address={address!} />
+                <p className="text-sm text-gray-400 mb-4">Scan QR Code</p>
+                <div className="inline-block p-4 bg-white rounded-2xl">
+                  <QRCode address={address!} />
+                </div>
               </div>
             </div>
 
-            <div className="bg-white rounded-2xl shadow-xl p-8">
-              <h2 className="text-xl font-bold text-gray-900 mb-6">Recent Transactions</h2>
+            <div className="glass-morphism rounded-2xl p-8 border border-white/20">
+              <h2 className="text-xl font-bold text-white mb-6">Recent Transactions</h2>
               <TransactionList address={address!} limit={5} />
             </div>
           </div>

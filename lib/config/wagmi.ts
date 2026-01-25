@@ -4,31 +4,17 @@ import { coinbaseWallet, injected, walletConnect } from 'wagmi/connectors'
 
 const projectId = process.env.NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID
 
-// Base mainnet configuration
-const baseMainnet = {
-  ...base,
-  rpcUrls: {
-    ...base.rpcUrls,
-    default: {
-      http: ['https://mainnet.base.org'],
-    },
-    public: {
-      http: ['https://mainnet.base.org'],
-    },
-  },
-}
 
 export const wagmiConfig = createConfig({
-  chains: [baseMainnet],
+  chains: [base],
   connectors: [
     injected(),
-    coinbaseWallet({
-      appName: 'MiniSente',
-      appLogoUrl: 'https://minisente.io/logo.png',
+    coinbaseWallet({ appName: 'MiniSente' }),
+    walletConnect({ 
+      projectId: process.env.NEXT_PUBLIC_WC_PROJECT_ID || 'demo-project-id'
     }),
-    ...(projectId ? [walletConnect({ projectId })] : []),
   ],
   transports: {
-    [baseMainnet.id]: http(),
+    [base.id]: http('https://mainnet.base.org'),
   },
 })
