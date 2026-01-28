@@ -1,20 +1,17 @@
-import { createConfig, http } from 'wagmi'
-import { base, baseSepolia } from 'wagmi/chains'
-import { coinbaseWallet, injected, walletConnect } from 'wagmi/connectors'
-
-const projectId = process.env.NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID
-
+import { http, createConfig } from 'wagmi'
+import { base } from 'wagmi/chains'
+import { coinbaseWallet } from 'wagmi/connectors'
 
 export const wagmiConfig = createConfig({
   chains: [base],
   connectors: [
-    injected(),
-    coinbaseWallet({ appName: 'MiniSente' }),
-    walletConnect({ 
-      projectId: process.env.NEXT_PUBLIC_WC_PROJECT_ID || 'demo-project-id'
+    coinbaseWallet({
+      appName: 'MiniSente',
+      preference: 'smartWalletOnly',
     }),
   ],
   transports: {
-    [base.id]: http('https://mainnet.base.org'),
+    [base.id]: http(),
   },
+  ssr: true,
 })

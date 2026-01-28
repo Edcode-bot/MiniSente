@@ -1,9 +1,20 @@
 'use client'
 
 import { useAccount } from 'wagmi'
-import { OnchainWallet } from '@/components/wallet/OnchainWallet'
-import { OnchainFundCard } from '@/components/fund/FundCard'
-import { OnchainIdentity } from '@/components/identity/Identity'
+import { 
+  Wallet, 
+  WalletDropdown, 
+  WalletDropdownLink, 
+  WalletDropdownDisconnect,
+} from '@coinbase/onchainkit/wallet'
+import {
+  Address,
+  Avatar,
+  Name,
+  Identity,
+  EthBalance,
+} from '@coinbase/onchainkit/identity'
+import { FundCard } from '@coinbase/onchainkit/fund'
 import { useUSDCBalance } from '@/hooks/useUSDCBalance'
 import Link from 'next/link'
 import { ArrowUpRight, ArrowDownLeft, ArrowUpDown, Smartphone, Database, Zap, GraduationCap, RefreshCw, History } from 'lucide-react'
@@ -24,8 +35,8 @@ export default function Dashboard() {
       title: 'Airtime',
       description: 'Buy airtime for MTN & Airtel',
       href: '/utilities/airtime',
-      color: 'from-accent-orange to-accent-orange',
-      borderColor: 'border-accent-orange/20',
+      color: 'from-base-blue to-base-blue',
+      borderColor: 'border-base-blue/20',
     },
     {
       icon: Database,
@@ -33,8 +44,8 @@ export default function Dashboard() {
       title: 'Data',
       description: 'Purchase data bundles',
       href: '/utilities/data',
-      color: 'from-primary-blue to-primary-blue',
-      borderColor: 'border-primary-blue/20',
+      color: 'from-base-green to-base-green',
+      borderColor: 'border-base-green/20',
     },
     {
       icon: Zap,
@@ -42,8 +53,8 @@ export default function Dashboard() {
       title: 'Electricity',
       description: 'Pay UMEME prepaid',
       href: '/utilities/electricity',
-      color: 'from-accent-green to-accent-green',
-      borderColor: 'border-accent-green/20',
+      color: 'from-base-blue to-base-green',
+      borderColor: 'border-base-blue/20',
     },
     {
       icon: GraduationCap,
@@ -51,8 +62,8 @@ export default function Dashboard() {
       title: 'School Fees',
       description: 'Pay school fees',
       href: '/utilities/school-fees',
-      color: 'from-accent-pink to-accent-pink',
-      borderColor: 'border-accent-pink/20',
+      color: 'from-base-green to-base-blue',
+      borderColor: 'border-base-green/20',
     },
     {
       icon: ArrowUpDown,
@@ -60,8 +71,8 @@ export default function Dashboard() {
       title: 'Swap',
       description: 'Exchange tokens',
       href: '/swap',
-      color: 'from-primary-violet to-primary-blue',
-      borderColor: 'border-primary-violet/20',
+      color: 'from-base-blue to-base-green',
+      borderColor: 'border-base-blue/20',
     },
   ]
 
@@ -78,7 +89,20 @@ export default function Dashboard() {
           <p className="text-gray-400 mb-8">
             Connect your wallet to access digital money services on Base chain
           </p>
-          <OnchainWallet />
+          <Wallet>
+          <WalletDropdown>
+            <Identity className="px-4 pt-3 pb-2" hasCopyAddressOnClick>
+              <Avatar />
+              <Name />
+              <Address />
+              <EthBalance />
+            </Identity>
+            <WalletDropdownLink icon="wallet" href="https://keys.coinbase.com">
+              Wallet
+            </WalletDropdownLink>
+            <WalletDropdownDisconnect />
+          </WalletDropdown>
+        </Wallet>
         </div>
       </div>
     )
@@ -110,7 +134,20 @@ export default function Dashboard() {
               <div className="text-sm font-mono bg-white/10 px-3 py-1 rounded-lg border border-white/20">
                 {address?.slice(0, 6)}...{address?.slice(-4)}
               </div>
-              <OnchainWallet />
+              <Wallet>
+          <WalletDropdown>
+            <Identity className="px-4 pt-3 pb-2" hasCopyAddressOnClick>
+              <Avatar />
+              <Name />
+              <Address />
+              <EthBalance />
+            </Identity>
+            <WalletDropdownLink icon="wallet" href="https://keys.coinbase.com">
+              Wallet
+            </WalletDropdownLink>
+            <WalletDropdownDisconnect />
+          </WalletDropdown>
+        </Wallet>
             </div>
           </div>
         </div>
@@ -156,8 +193,20 @@ export default function Dashboard() {
 
           {/* Identity and Fund Card */}
           <div className="space-y-6">
-            <OnchainIdentity />
-            <OnchainFundCard />
+            <div className="glass-morphism rounded-xl p-6 border border-white/20">
+              <h3 className="text-lg font-semibold text-white mb-4">Your Identity</h3>
+              <Identity className="identity" hasCopyAddressOnClick>
+                <Avatar className="avatar w-12 h-12 rounded-full" />
+                <Name className="text-white font-medium" />
+                <Address className="text-gray-400 text-sm" />
+              </Identity>
+            </div>
+            
+            <FundCard 
+              className="w-full"
+              country="US"
+              assetSymbol="USDC"
+            />
           </div>
         </div>
 

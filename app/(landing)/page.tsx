@@ -1,6 +1,18 @@
 'use client'
 
-import { OnchainWallet } from '@/components/wallet/OnchainWallet'
+import { 
+  Wallet, 
+  WalletDropdown, 
+  WalletDropdownLink, 
+  WalletDropdownDisconnect,
+} from '@coinbase/onchainkit/wallet'
+import {
+  Address,
+  Avatar,
+  Name,
+  Identity,
+  EthBalance,
+} from '@coinbase/onchainkit/identity'
 import Link from 'next/link'
 import { ArrowRight, Zap, Shield, Globe, Smartphone, Database, GraduationCap } from 'lucide-react'
 
@@ -8,10 +20,10 @@ export default function LandingPage() {
   return (
     <div className="min-h-screen bg-bg-darker text-white overflow-hidden">
       {/* Animated Background */}
-      <div className="fixed inset-0 bg-gradient-to-br from-bg-darker via-bg-dark to-bg-darker">
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-primary-violet/20 via-transparent to-transparent"></div>
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_bottom_right,_var(--tw-gradient-stops))] from-primary-blue/20 via-transparent to-transparent"></div>
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_bottom_left,_var(--tw-gradient-stops))] from-primary-teal/20 via-transparent to-transparent"></div>
+      <div className="fixed inset-0 bg-gradient-to-br from-base-darker via-base-dark to-base-darker">
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-base-blue/20 via-transparent to-transparent"></div>
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_bottom_right,_var(--tw-gradient-stops))] from-base-green/20 via-transparent to-transparent"></div>
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_bottom_left,_var(--tw-gradient-stops))] from-base-blue/10 via-transparent to-transparent"></div>
       </div>
 
       {/* Navigation */}
@@ -19,7 +31,7 @@ export default function LandingPage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
             <div className="flex items-center gap-2">
-              <div className="w-8 h-8 bg-gradient-to-br from-primary-violet via-primary-blue to-primary-teal rounded-lg flex items-center justify-center">
+              <div className="w-8 h-8 bg-gradient-to-br from-base-blue to-base-green rounded-lg flex items-center justify-center">
                 <Zap className="w-4 h-4 text-white" />
               </div>
               <span className="text-xl font-bold gradient-text">MiniSente</span>
@@ -38,7 +50,20 @@ export default function LandingPage() {
               >
                 Launch App
               </Link>
-              <OnchainWallet />
+              <Wallet>
+            <WalletDropdown>
+              <Identity className="px-4 pt-3 pb-2" hasCopyAddressOnClick>
+                <Avatar />
+                <Name />
+                <Address />
+                <EthBalance />
+              </Identity>
+              <WalletDropdownLink icon="wallet" href="https://keys.coinbase.com">
+                Wallet
+              </WalletDropdownLink>
+              <WalletDropdownDisconnect />
+            </WalletDropdown>
+          </Wallet>
             </div>
           </div>
         </div>
@@ -61,7 +86,20 @@ export default function LandingPage() {
           </div>
 
           <div className="flex flex-col sm:flex-row gap-4 justify-center items-center mb-16">
-            <OnchainWallet />
+            <Wallet>
+            <WalletDropdown>
+              <Identity className="px-4 pt-3 pb-2" hasCopyAddressOnClick>
+                <Avatar />
+                <Name />
+                <Address />
+                <EthBalance />
+              </Identity>
+              <WalletDropdownLink icon="wallet" href="https://keys.coinbase.com">
+                Wallet
+              </WalletDropdownLink>
+              <WalletDropdownDisconnect />
+            </WalletDropdown>
+          </Wallet>
             <Link 
               href="#features" 
               className="px-8 py-4 text-lg font-medium text-white border border-white/20 rounded-xl hover:bg-white/10 transition-all duration-200 flex items-center gap-2"
@@ -217,7 +255,7 @@ export default function LandingPage() {
           <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
             <div>
               <div className="flex items-center gap-2 mb-4">
-                <div className="w-8 h-8 bg-gradient-to-br from-primary-violet via-primary-blue to-primary-teal rounded-lg flex items-center justify-center">
+                <div className="w-8 h-8 bg-gradient-to-br from-base-blue to-base-green rounded-lg flex items-center justify-center">
                   <Zap className="w-4 h-4 text-white" />
                 </div>
                 <span className="text-xl font-bold gradient-text">MiniSente</span>
