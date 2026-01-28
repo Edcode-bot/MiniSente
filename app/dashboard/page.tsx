@@ -1,10 +1,12 @@
 'use client'
 
 import { useAccount } from 'wagmi'
-import { ConnectWallet } from '@/components/wallet/ConnectWallet'
+import { OnchainWallet } from '@/components/wallet/OnchainWallet'
+import { OnchainFundCard } from '@/components/fund/FundCard'
+import { OnchainIdentity } from '@/components/identity/Identity'
 import { useUSDCBalance } from '@/hooks/useUSDCBalance'
 import Link from 'next/link'
-import { ArrowUpRight, ArrowDownLeft, Smartphone, Database, Zap, GraduationCap, RefreshCw, History } from 'lucide-react'
+import { ArrowUpRight, ArrowDownLeft, ArrowUpDown, Smartphone, Database, Zap, GraduationCap, RefreshCw, History } from 'lucide-react'
 
 export default function Dashboard() {
   const { address, isConnected } = useAccount()
@@ -52,6 +54,15 @@ export default function Dashboard() {
       color: 'from-accent-pink to-accent-pink',
       borderColor: 'border-accent-pink/20',
     },
+    {
+      icon: ArrowUpDown,
+      emoji: '🔄',
+      title: 'Swap',
+      description: 'Exchange tokens',
+      href: '/swap',
+      color: 'from-primary-violet to-primary-blue',
+      borderColor: 'border-primary-violet/20',
+    },
   ]
 
   if (!isConnected) {
@@ -67,7 +78,7 @@ export default function Dashboard() {
           <p className="text-gray-400 mb-8">
             Connect your wallet to access digital money services on Base chain
           </p>
-          <ConnectWallet />
+          <OnchainWallet />
         </div>
       </div>
     )
@@ -90,6 +101,7 @@ export default function Dashboard() {
               <Link href="/dashboard" className="text-white font-medium">Dashboard</Link>
               <Link href="/send" className="text-gray-300 hover:text-white transition-colors">Send</Link>
               <Link href="/receive" className="text-gray-300 hover:text-white transition-colors">Receive</Link>
+              <Link href="/swap" className="text-gray-300 hover:text-white transition-colors">Swap</Link>
               <Link href="/utilities" className="text-gray-300 hover:text-white transition-colors">Utilities</Link>
               <Link href="/history" className="text-gray-300 hover:text-white transition-colors">History</Link>
             </div>
@@ -98,51 +110,56 @@ export default function Dashboard() {
               <div className="text-sm font-mono bg-white/10 px-3 py-1 rounded-lg border border-white/20">
                 {address?.slice(0, 6)}...{address?.slice(-4)}
               </div>
-              <ConnectWallet />
+              <OnchainWallet />
             </div>
           </div>
         </div>
       </nav>
 
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        {/* Balance Card */}
-        <section className="mb-12">
-          <div className="glass-morphism rounded-2xl p-8 border border-white/20 glow-effect">
-            <div className="flex justify-between items-start mb-6">
-              <div>
-                <h2 className="text-2xl font-semibold text-white mb-2">Your Balance</h2>
-                <p className="text-gray-400">USDC on Base Network</p>
-              </div>
-              <button
-                onClick={() => refetch()}
-                className="p-2 bg-white/10 rounded-lg hover:bg-white/20 transition-colors"
-                disabled={isLoading}
-              >
-                <RefreshCw className={`w-4 h-4 ${isLoading ? 'animate-spin' : ''}`} />
-              </button>
-            </div>
-            
-            <div className="grid md:grid-cols-2 gap-8">
-              <div>
-                <p className="text-sm text-gray-400 mb-2">USDC Balance</p>
-                <div className="flex items-baseline gap-2">
-                  <span className="text-4xl font-bold gradient-text">
-                    {isLoading ? '...' : balance}
-                  </span>
-                  <span className="text-lg text-gray-400">USDC</span>
+        {/* Balance and Identity */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-12">
+          {/* Balance Card */}
+          <div className="lg:col-span-2">
+            <div className="glass-morphism rounded-2xl p-8 border border-white/20 glow-effect">
+              <div className="flex justify-between items-start mb-6">
+                <div>
+                  <h2 className="text-lg text-gray-400 mb-2">Total Balance</h2>
+                  <div className="text-4xl font-bold gradient-text">
+                    {isLoading ? '...' : balance} USDC
+                  </div>
+                  <p className="text-gray-400 mt-2">
+                    ≈ {isLoading ? '...' : usdcToUgx(balance)}
+                  </p>
                 </div>
+                <button
+                  onClick={() => refetch()}
+                  className="p-2 bg-white/10 rounded-lg hover:bg-white/20 transition-colors"
+                  disabled={isLoading}
+                >
+                  <RefreshCw className={`w-5 h-5 text-white ${isLoading ? 'animate-spin' : ''}`} />
+                </button>
               </div>
-              <div>
-                <p className="text-sm text-gray-400 mb-2">UGX Equivalent</p>
-                <div className="flex items-baseline gap-2">
-                  <span className="text-4xl font-bold text-accent-green">
-                    {isLoading ? '...' : usdcToUgx(balance)}
-                  </span>
+              
+              <div className="grid grid-cols-2 gap-4">
+                <div className="bg-white/5 rounded-lg p-4">
+                  <p className="text-sm text-gray-400 mb-1">24h Change</p>
+                  <p className="text-lg font-semibold text-green-400">+0.00%</p>
+                </div>
+                <div className="bg-white/5 rounded-lg p-4">
+                  <p className="text-sm text-gray-400 mb-1">Network</p>
+                  <p className="text-lg font-semibold text-primary-blue">Base</p>
                 </div>
               </div>
             </div>
           </div>
-        </section>
+
+          {/* Identity and Fund Card */}
+          <div className="space-y-6">
+            <OnchainIdentity />
+            <OnchainFundCard />
+          </div>
+        </div>
 
         {/* Quick Actions */}
         <section className="mb-12">
@@ -154,7 +171,7 @@ export default function Dashboard() {
             </Link>
           </div>
           
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
             <Link href="/send" className="glass-morphism p-6 rounded-2xl border border-white/20 hover:border-primary-blue/50 transition-all duration-200 group">
               <div className="w-12 h-12 bg-gradient-to-br from-primary-violet to-primary-blue rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
                 <ArrowUpRight className="w-6 h-6 text-white" />
@@ -179,7 +196,15 @@ export default function Dashboard() {
               <p className="text-sm text-gray-400">Pay bills</p>
             </Link>
 
-            <Link href="/history" className="glass-morphism p-6 rounded-2xl border border-white/20 hover:border-primary-violet/50 transition-all duration-200 group">
+            <Link href="/swap" className="glass-morphism p-6 rounded-2xl border border-white/20 hover:border-primary-violet/50 transition-all duration-200 group">
+              <div className="w-12 h-12 bg-gradient-to-br from-primary-violet to-primary-blue rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+                <ArrowUpDown className="w-6 h-6 text-white" />
+              </div>
+              <h3 className="text-lg font-semibold text-white mb-1">Swap</h3>
+              <p className="text-sm text-gray-400">Exchange tokens</p>
+            </Link>
+
+            <Link href="/history" className="glass-morphism p-6 rounded-2xl border border-white/20 hover:border-primary-blue/50 transition-all duration-200 group">
               <div className="w-12 h-12 bg-gradient-to-br from-primary-violet to-primary-blue rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
                 <History className="w-6 h-6 text-white" />
               </div>
@@ -192,7 +217,7 @@ export default function Dashboard() {
         {/* Utilities */}
         <section>
           <h2 className="text-2xl font-semibold text-white mb-6">Utilities</h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6">
             {actionCards.map((card) => {
               const Icon = card.icon
               return (
