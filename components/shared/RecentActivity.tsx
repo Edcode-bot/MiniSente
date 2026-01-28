@@ -5,7 +5,7 @@ import { useAccount } from 'wagmi'
 import { ArrowUpRight, ArrowDownLeft, Smartphone, Database, Zap, GraduationCap, ExternalLink } from 'lucide-react'
 import { formatAddress, formatUSDC, formatTimestamp } from '@/lib/utils/format'
 import { BLOCK_EXPLORER_URL } from '@/lib/config/constants'
-import { useRealTransactions } from '@/lib/hooks/useRealTransactions'
+import { useTransactions } from '@/lib/hooks/useTransactions'
 
 interface ActivityItem {
   hash: string
@@ -18,15 +18,15 @@ interface ActivityItem {
 
 export function RecentActivity() {
   const { address } = useAccount()
-  const { transactions } = useRealTransactions()
+  const { transactions } = useTransactions()
   const [recentActivity, setRecentActivity] = useState<ActivityItem[]>([])
 
   useEffect(() => {
     if (!address || !transactions.length) return
 
     const activity: ActivityItem[] = transactions.slice(0, 5).map((tx) => {
-      const isFromUser = tx.from.toLowerCase() === address.toLowerCase()
-      const isToTreasury = tx.to.toLowerCase() === '0x742d35Cc6634C0532925a3b844Bc9e7595f0bEb'.toLowerCase()
+      const isFromUser = tx.from_address?.toLowerCase() === address.toLowerCase()
+      const isToTreasury = tx.to_address?.toLowerCase() === '0x742d35Cc6634C0532925a3b844Bc9e7595f0bEb'.toLowerCase()
       
       let type: ActivityItem['type']
       let description = ''
@@ -39,18 +39,18 @@ export function RecentActivity() {
         description = 'Utility payment'
       } else if (isFromUser) {
         type = 'sent'
-        description = `To ${formatAddress(tx.to)}`
+        description = `To ${formatAddress(tx.to_address || '')}`
       } else {
         type = 'received'
-        description = `From ${formatAddress(tx.from)}`
+        description = `From ${formatAddress(tx.from_address || '')}`
       }
 
       return {
-        hash: tx.hash,
+        hash: tx.tx_hash,
         type,
-        amount: (parseFloat(tx.value) / 1e6).toFixed(2),
-        timestamp: tx.timestamp,
-        status: tx.status === 'success' ? 'success' : tx.status === 'pending' ? 'pending' : 'failed',
+        amount: tx.amount.toString(),
+        timestamp: new Date(tx.created_at).getTime(),
+        status: tx.status === 'confirmed' ? 'success' : tx.status === 'failed' ? 'failed' : 'pending',
         description,
       }
     })

@@ -1,6 +1,6 @@
 'use client'
 
-import { ConnectWallet } from '@/components/wallet/ConnectWallet'
+import { OnchainWallet } from '@/components/wallet/OnchainWallet'
 import Link from 'next/link'
 import { ArrowRight, Zap, Shield, Globe, Smartphone, Database, GraduationCap } from 'lucide-react'
 
@@ -38,7 +38,7 @@ export default function LandingPage() {
               >
                 Launch App
               </Link>
-              <ConnectWallet />
+              <OnchainWallet />
             </div>
           </div>
         </div>
@@ -61,7 +61,7 @@ export default function LandingPage() {
           </div>
 
           <div className="flex flex-col sm:flex-row gap-4 justify-center items-center mb-16">
-            <ConnectWallet />
+            <OnchainWallet />
             <Link 
               href="#features" 
               className="px-8 py-4 text-lg font-medium text-white border border-white/20 rounded-xl hover:bg-white/10 transition-all duration-200 flex items-center gap-2"
