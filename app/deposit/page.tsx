@@ -13,22 +13,17 @@ import {
   Name,
   Identity,
 } from '@coinbase/onchainkit/identity'
-import { useWriteContract } from 'wagmi'
-import { USDC_ADDRESS, ERC20_ABI } from '@/lib/contracts/erc20'
-import { PAYMENT_ROUTER_ADDRESS } from '@/lib/contracts/paymentRouter'
-import { parseUnits } from 'viem'
 import { toast } from 'sonner'
 import Link from 'next/link'
-import { ArrowLeft, Phone, Smartphone, ArrowRight } from 'lucide-react'
+import { ArrowLeft, Smartphone, ArrowRight, TrendingUp } from 'lucide-react'
 
-export default function AirtimePage() {
+export default function DepositPage() {
   const { address, isConnected } = useAccount()
-  const [selectedCarrier, setSelectedCarrier] = useState<'MTN' | 'AIRTEL'>('MTN')
   const [phoneNumber, setPhoneNumber] = useState('')
   const [amount, setAmount] = useState('')
+  const [network, setNetwork] = useState<'MTN' | 'AIRTEL'>('MTN')
+  const [email, setEmail] = useState('')
   const [loading, setLoading] = useState(false)
-
-  const { writeContract } = useWriteContract()
 
   const validateForm = () => {
     if (!phoneNumber || !amount || parseFloat(amount) < 1000) {
@@ -38,46 +33,37 @@ export default function AirtimePage() {
     return true
   }
 
-  const handlePurchase = async () => {
+  const handleDeposit = async () => {
     if (!isConnected || !validateForm()) return
 
     setLoading(true)
 
     try {
-      const amountUsdc = parseFloat(amount) / 3800
-
-      // Step 1: Approve USDC spending
-      await writeContract({
-        address: USDC_ADDRESS,
-        abi: ERC20_ABI,
-        functionName: 'approve',
-        args: [PAYMENT_ROUTER_ADDRESS, parseUnits(amountUsdc.toString(), 6)],
-      })
-
-      // Step 2: Call backend API to purchase airtime
-      const response = await fetch('/api/utilities/airtime', {
+      const response = await fetch('/api/deposit/mobile-money', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           userId: address,
           phone: phoneNumber,
           amount: parseFloat(amount),
-          carrier: selectedCarrier,
+          network: network,
+          email: email || `${address}@minisente.com`,
         }),
       })
 
       const result = await response.json()
 
       if (result.success) {
-        toast.success('Airtime sent successfully!')
+        toast.success('Deposit initiated! Please complete payment on your phone.')
         setPhoneNumber('')
         setAmount('')
+        setEmail('')
       } else {
-        toast.error(result.error || 'Purchase failed')
+        toast.error(result.error || 'Deposit failed')
       }
     } catch (error: any) {
-      console.error('Purchase error:', error)
-      toast.error(error.message || 'Purchase failed')
+      console.error('Deposit error:', error)
+      toast.error(error.message || 'Deposit failed')
     } finally {
       setLoading(false)
     }
@@ -87,14 +73,14 @@ export default function AirtimePage() {
     return (
       <div className="min-h-screen bg-neutral-50 dark:bg-neutral-900 flex items-center justify-center">
         <div className="text-center max-w-md">
-          <div className="w-24 h-24 bg-gradient-to-br from-primary-500 to-primary-600 rounded-2xl flex items-center justify-center mx-auto mb-6 shadow-soft-lg">
-            <Smartphone className="text-white" size={32} />
+          <div className="w-24 h-24 bg-gradient-to-br from-success-500 to-success-600 rounded-2xl flex items-center justify-center mx-auto mb-6 shadow-soft-lg">
+            <TrendingUp className="text-white" size={32} />
           </div>
           <h2 className="text-2xl font-semibold text-neutral-900 dark:text-white mb-4">
             Connect Your Wallet
           </h2>
           <p className="text-neutral-600 dark:text-neutral-300 mb-8">
-            Connect your wallet to buy airtime
+            Connect your wallet to deposit funds
           </p>
           <Wallet>
             <WalletDropdown>
@@ -119,12 +105,12 @@ export default function AirtimePage() {
           <div className="flex justify-between items-center">
             <div className="flex items-center gap-8">
               <div className="flex items-center gap-3">
-                <Link href="/utilities" className="p-2 hover:bg-neutral-100 dark:hover:bg-neutral-800 rounded-lg transition-colors">
+                <Link href="/dashboard" className="p-2 hover:bg-neutral-100 dark:hover:bg-neutral-800 rounded-lg transition-colors">
                   <ArrowLeft className="w-5 h-5 text-neutral-600 dark:text-neutral-300" />
                 </Link>
                 <div>
-                  <h1 className="text-2xl font-semibold text-neutral-900 dark:text-white">Buy Airtime</h1>
-                  <p className="text-sm text-neutral-600 dark:text-neutral-300">Top up your mobile phone</p>
+                  <h1 className="text-2xl font-semibold text-neutral-900 dark:text-white">Deposit Funds</h1>
+                  <p className="text-sm text-neutral-600 dark:text-neutral-300">Add USDC via Mobile Money</p>
                 </div>
               </div>
             </div>
@@ -146,35 +132,53 @@ export default function AirtimePage() {
       </nav>
 
       <main className="max-w-2xl mx-auto px-6 py-8">
+        {/* Info Card */}
+        <div className="card p-6 mb-8 bg-gradient-to-br from-success-50 to-success-100 dark:from-success-900/20 dark:to-success-800/20 border-success-200 dark:border-success-800">
+          <div className="flex items-start gap-4">
+            <div className="w-12 h-12 bg-success-500 rounded-xl flex items-center justify-center flex-shrink-0">
+              <TrendingUp className="text-white" size={20} />
+            </div>
+            <div>
+              <h3 className="font-semibold text-neutral-900 dark:text-white mb-2">How it works</h3>
+              <p className="text-sm text-neutral-600 dark:text-neutral-300">
+                1. Enter your mobile money details<br />
+                2. Pay UGX via MTN/Airtel Mobile Money<br />
+                3. Receive USDC in your wallet instantly<br />
+                4. Exchange rate: 1 USDC = 3,800 UGX
+              </p>
+            </div>
+          </div>
+        </div>
+
         <div className="card p-8">
-          <form onSubmit={(e) => { e.preventDefault(); handlePurchase(); }} className="space-y-8">
-            {/* Carrier Selection */}
+          <form onSubmit={(e) => { e.preventDefault(); handleDeposit(); }} className="space-y-8">
+            {/* Network Selection */}
             <div>
               <label className="block text-sm font-medium text-neutral-900 dark:text-white mb-4">
-                Select Carrier
+                Select Mobile Network
               </label>
               <div className="grid grid-cols-2 gap-4">
                 <button
                   type="button"
-                  onClick={() => setSelectedCarrier('MTN')}
+                  onClick={() => setNetwork('MTN')}
                   className={`p-4 rounded-xl border-2 transition-all card-hover ${
-                    selectedCarrier === 'MTN'
+                    network === 'MTN'
                       ? 'bg-yellow-500 text-white border-yellow-500'
                       : 'border-neutral-200 dark:border-neutral-700 hover:border-neutral-300 dark:hover:border-neutral-600'
                   }`}
                 >
-                  <div className="font-medium">MTN</div>
+                  <div className="font-medium">MTN Mobile Money</div>
                 </button>
                 <button
                   type="button"
-                  onClick={() => setSelectedCarrier('AIRTEL')}
+                  onClick={() => setNetwork('AIRTEL')}
                   className={`p-4 rounded-xl border-2 transition-all card-hover ${
-                    selectedCarrier === 'AIRTEL'
+                    network === 'AIRTEL'
                       ? 'bg-red-500 text-white border-red-500'
                       : 'border-neutral-200 dark:border-neutral-700 hover:border-neutral-300 dark:hover:border-neutral-600'
                   }`}
                 >
-                  <div className="font-medium">Airtel</div>
+                  <div className="font-medium">Airtel Money</div>
                 </button>
               </div>
             </div>
@@ -185,7 +189,7 @@ export default function AirtimePage() {
                 Phone Number
               </label>
               <div className="relative">
-                <Phone className="absolute left-3 top-3 w-5 h-5 text-neutral-400" />
+                <Smartphone className="absolute left-3 top-3 w-5 h-5 text-neutral-400" />
                 <input
                   type="tel"
                   value={phoneNumber}
@@ -196,20 +200,34 @@ export default function AirtimePage() {
               </div>
             </div>
 
+            {/* Email Input */}
+            <div>
+              <label className="block text-sm font-medium text-neutral-900 dark:text-white mb-2">
+                Email (Optional)
+              </label>
+              <input
+                type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                placeholder="your@email.com"
+                className="input"
+              />
+            </div>
+
             {/* Amount */}
             <div>
               <label className="block text-sm font-medium text-neutral-900 dark:text-white mb-2">
                 Amount (UGX)
               </label>
               <div className="grid grid-cols-4 gap-2 mb-4">
-                {[1000, 2000, 5000, 10000].map((amt) => (
+                {[5000, 10000, 20000, 50000].map((amt) => (
                   <button
                     key={amt}
                     type="button"
                     onClick={() => setAmount(amt.toString())}
                     className={`py-2 px-4 rounded-lg border transition-all card-hover ${
                       amount === amt.toString()
-                        ? 'bg-primary text-white border-primary'
+                        ? 'bg-success text-white border-success'
                         : 'border-neutral-200 dark:border-neutral-700 hover:border-neutral-300 dark:hover:border-neutral-600'
                     }`}
                   >
@@ -226,18 +244,18 @@ export default function AirtimePage() {
               />
               {amount && parseFloat(amount) > 0 && (
                 <p className="mt-2 text-sm text-neutral-600 dark:text-neutral-300">
-                  Cost: ~{(parseFloat(amount) / 3800).toFixed(4)} USDC
+                  You will receive: ~{(parseFloat(amount) / 3800).toFixed(4)} USDC
                 </p>
               )}
             </div>
 
-            {/* Purchase Button */}
+            {/* Deposit Button */}
             <button
               type="submit"
               disabled={loading || !phoneNumber || !amount}
               className="btn btn-primary w-full"
             >
-              {loading ? 'Processing...' : 'Buy Airtime'}
+              {loading ? 'Processing...' : 'Deposit USDC'}
               <ArrowRight size={16} />
             </button>
           </form>
