@@ -13,10 +13,6 @@ import {
   Name,
   Identity,
 } from '@coinbase/onchainkit/identity'
-import { useWriteContract } from 'wagmi'
-import { USDC_ADDRESS, ERC20_ABI } from '@/lib/contracts/erc20'
-import { PAYMENT_ROUTER_ADDRESS } from '@/lib/contracts/paymentRouter'
-import { parseUnits } from 'viem'
 import { toast } from 'sonner'
 import Link from 'next/link'
 import { ArrowLeft, Phone, Smartphone, ArrowRight } from 'lucide-react'
@@ -27,8 +23,6 @@ export default function AirtimePage() {
   const [phoneNumber, setPhoneNumber] = useState('')
   const [amount, setAmount] = useState('')
   const [loading, setLoading] = useState(false)
-
-  const { writeContract } = useWriteContract()
 
   const validateForm = () => {
     if (!phoneNumber || !amount || parseFloat(amount) < 1000) {
@@ -44,37 +38,10 @@ export default function AirtimePage() {
     setLoading(true)
 
     try {
-      const amountUsdc = parseFloat(amount) / 3800
-
-      // Step 1: Approve USDC spending
-      await writeContract({
-        address: USDC_ADDRESS,
-        abi: ERC20_ABI,
-        functionName: 'approve',
-        args: [PAYMENT_ROUTER_ADDRESS, parseUnits(amountUsdc.toString(), 6)],
-      })
-
-      // Step 2: Call backend API to purchase airtime
-      const response = await fetch('/api/utilities/airtime', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          userId: address,
-          phone: phoneNumber,
-          amount: parseFloat(amount),
-          carrier: selectedCarrier,
-        }),
-      })
-
-      const result = await response.json()
-
-      if (result.success) {
-        toast.success('Airtime sent successfully!')
-        setPhoneNumber('')
-        setAmount('')
-      } else {
-        toast.error(result.error || 'Purchase failed')
-      }
+      // Mock implementation for now
+      toast.success('Airtime purchase coming soon!')
+      setPhoneNumber('')
+      setAmount('')
     } catch (error: any) {
       console.error('Purchase error:', error)
       toast.error(error.message || 'Purchase failed')
@@ -224,11 +191,6 @@ export default function AirtimePage() {
                 placeholder="Enter custom amount"
                 className="input"
               />
-              {amount && parseFloat(amount) > 0 && (
-                <p className="mt-2 text-sm text-neutral-600 dark:text-neutral-300">
-                  Cost: ~{(parseFloat(amount) / 3800).toFixed(4)} USDC
-                </p>
-              )}
             </div>
 
             {/* Purchase Button */}
