@@ -1,30 +1,94 @@
-@import "tailwindcss";
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 
-:root {
-  --bg-darker: #020617;
-  --bg-dark: #0F172A;
-  --primary-violet: #7C3AED;
-  --primary-blue: #3B82F6;
-  --primary-teal: #14B8A6;
-  --accent-green: #10B981;
-  --accent-pink: #EC4899;
-  --accent-orange: #F59E0B;
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+@layer base {
+  :root {
+    /* Light mode colors */
+    --background: 248 250 252;
+    --foreground: 15 16 32;
+    --surface: 255 255 255;
+    --border: 229 231 235;
+    
+    --primary: 91 92 246;
+    --primary-foreground: 255 255 255;
+    
+    --secondary: 165 180 252;
+    --secondary-foreground: 15 16 32;
+    
+    --accent: 45 212 191;
+    --accent-foreground: 255 255 255;
+    
+    --muted: 241 245 249;
+    --muted-foreground: 100 116 139;
+    
+    --success: 34 197 94;
+    --warning: 245 158 11;
+    --error: 239 68 68;
+    
+    --radius: 0.75rem;
+  }
+
+  .dark {
+    /* Dark mode colors */
+    --background: 11 16 32;
+    --foreground: 248 250 252;
+    --surface: 17 24 39;
+    --border: 31 41 55;
+    
+    --primary: 109 106 251;
+    --primary-foreground: 255 255 255;
+    
+    --secondary: 165 180 252;
+    --secondary-foreground: 11 16 32;
+    
+    --accent: 45 212 191;
+    --accent-foreground: 11 16 32;
+    
+    --muted: 30 41 59;
+    --muted-foreground: 148 163 184;
+    
+    --success: 34 197 94;
+    --warning: 245 158 11;
+    --error: 239 68 68;
+  }
+
+  * {
+    border-color: rgb(var(--border));
+  }
+
+  body {
+    background-color: rgb(var(--background));
+    color: rgb(var(--foreground));
+    font-family: 'Inter', system-ui, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
 }
 
-@theme inline {
-  --color-bg-darker: var(--bg-darker);
-  --color-bg-dark: var(--bg-dark);
-  --color-primary-violet: var(--primary-violet);
-  --color-primary-blue: var(--primary-blue);
-  --color-primary-teal: var(--primary-teal);
-  --color-accent-green: var(--accent-green);
-  --color-accent-pink: var(--accent-pink);
-  --color-accent-orange: var(--accent-orange);
-}
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
 
-body {
-  background-color: var(--bg-darker);
-  color: white;
+  .animate-in {
+    animation: fadeIn 0.5s ease-in-out;
+  }
+
+  .animate-up {
+    animation: slideUp 0.3s ease-out;
+  }
+
+  .animate-scale {
+    animation: scaleIn 0.2s ease-out;
+  }
 }
 
 .glow-effect {
@@ -47,15 +111,15 @@ body {
 }
 
 .gradient-text {
-  background: linear-gradient(to right, var(--primary-violet), var(--primary-blue), var(--primary-teal));
+  background: linear-gradient(to right, var(--primary), var(--primary), var(--primary));
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
 }
 
 .neon-green {
-  color: var(--accent-green);
-  filter: drop-shadow(0 0 10px rgba(16, 185, 129, 0.7));
+  color: var(--accent);
+  filter: drop-shadow(0 0 10px rgba(45, 212, 191, 0.7));
 }
 
 @keyframes pulse-glow {
