@@ -2,8 +2,6 @@
 @tailwind components;
 @tailwind utilities;
 
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
-
 @layer base {
   :root {
     /* Light mode colors */
@@ -89,6 +87,81 @@
   .animate-scale {
     animation: scaleIn 0.2s ease-out;
   }
+}
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  border-radius: 0.75rem;
+  padding: 0.75rem 1.5rem;
+  font-size: 0.875rem;
+  font-weight: 600;
+  transition: all 0.2s ease;
+}
+
+.btn-primary {
+  background-color: rgb(var(--primary));
+  color: rgb(var(--primary-foreground));
+  box-shadow: 0 2px 15px -3px rgba(0, 0, 0, 0.07), 0 10px 20px -2px rgba(0, 0, 0, 0.04);
+}
+
+.btn-primary:hover {
+  filter: brightness(1.08);
+  box-shadow: 0 10px 40px -10px rgba(0, 0, 0, 0.08), 0 4px 25px -5px rgba(0, 0, 0, 0.05);
+}
+
+.btn-outline {
+  border: 1px solid rgb(var(--border));
+  background-color: rgb(var(--surface));
+  color: rgb(var(--foreground));
+}
+
+.btn-outline:hover {
+  background-color: rgb(var(--muted));
+}
+
+.dark .btn-outline {
+  border-color: rgb(var(--border));
+  background-color: rgb(var(--surface));
+  color: rgb(var(--foreground));
+}
+
+.dark .btn-outline:hover {
+  background-color: rgb(var(--muted));
+}
+
+.card {
+  border-radius: 1rem;
+  border: 1px solid rgb(var(--border));
+  background-color: rgb(var(--surface));
+  box-shadow: 0 2px 15px -3px rgba(0, 0, 0, 0.07), 0 10px 20px -2px rgba(0, 0, 0, 0.04);
+}
+
+.card-interactive {
+  transition: all 0.2s ease;
+}
+
+.card-interactive:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 40px -10px rgba(0, 0, 0, 0.08), 0 4px 25px -5px rgba(0, 0, 0, 0.05);
+}
+
+.nav-pill {
+  border-radius: 9999px;
+  padding: 0.5rem 1rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  transition: color 0.2s ease, background-color 0.2s ease;
+}
+
+.nav-pill-inactive {
+  color: rgb(var(--muted-foreground));
+}
+
+.nav-pill-inactive:hover {
+  color: rgb(var(--foreground));
 }
 
 .glow-effect {

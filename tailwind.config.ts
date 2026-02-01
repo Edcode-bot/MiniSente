@@ -12,6 +12,7 @@ export default {
       colors: {
         // Primary Brand Colors
         primary: {
+          DEFAULT: '#6D6AFB',
           50: '#F0F1FF',
           100: '#E5E7FF',
           200: '#D4D7FE',
@@ -25,6 +26,7 @@ export default {
         },
         // Secondary Colors
         secondary: {
+          DEFAULT: '#14B8A6',
           50: '#F0FDFA',
           100: '#CCFBF1',
           200: '#99F6E4',
@@ -36,6 +38,25 @@ export default {
           800: '#115E59',
           900: '#134E4A',
         },
+        // Base / Landing palette
+        base: {
+          blue: '#4F7DF3',
+          green: '#22C55E',
+          dark: '#0B1020',
+          darker: '#070B16',
+        },
+        // Accent palette used across landing pages
+        accent: {
+          green: '#22C55E',
+          pink: '#F472B6',
+          orange: '#FB923C',
+          blue: '#60A5FA',
+        },
+        // Extra aliases used in landing design
+        'primary-violet': '#7C3AED',
+        'primary-blue': '#4F7DF3',
+        'primary-teal': '#14B8A6',
+        'bg-darker': '#0B1020',
         // Neutrals
         neutral: {
           50: '#F8FAFC',

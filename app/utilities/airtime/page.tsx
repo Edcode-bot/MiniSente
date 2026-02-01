@@ -38,10 +38,27 @@ export default function AirtimePage() {
     setLoading(true)
 
     try {
-      // Mock implementation for now
-      toast.success('Airtime purchase coming soon!')
-      setPhoneNumber('')
-      setAmount('')
+      // Call backend API to purchase airtime
+      const response = await fetch('/api/utilities/airtime', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          userId: address,
+          phone: phoneNumber,
+          amount: parseFloat(amount),
+          carrier: selectedCarrier,
+        }),
+      })
+
+      const result = await response.json()
+
+      if (result.success) {
+        toast.success('Airtime sent successfully!')
+        setPhoneNumber('')
+        setAmount('')
+      } else {
+        toast.error(result.error || 'Purchase failed')
+      }
     } catch (error: any) {
       console.error('Purchase error:', error)
       toast.error(error.message || 'Purchase failed')
@@ -157,7 +174,7 @@ export default function AirtimePage() {
                   type="tel"
                   value={phoneNumber}
                   onChange={(e) => setPhoneNumber(e.target.value)}
-                  placeholder="+256700000000"
+                  placeholder="256700000000"
                   className="input pl-10"
                 />
               </div>
